@@ -19,12 +19,9 @@ requirements.txt
 README.md
 
 
-
-markdown
-Copy code
 # Steps to Set Up the Project
 
-## 1. Clone the Repository
+## 1 Clone the Repository
 First, clone the repository to your local machine:
 
 ```bash
@@ -36,8 +33,7 @@ Create a .env file in the root of the Assignment3 directory if it’s not alread
 
 For example, your .env file might look like this:
 
-plaintext
-
+```plaintext
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
@@ -50,7 +46,6 @@ Make sure Docker is installed on your machine. You can download it from Docker's
 This project uses Docker Compose to set up the environment, including Airflow. To build and start the containers, run the following command from the project’s root directory:
 
 ```bash
-
 docker-compose up --build
 This will:
 
@@ -62,8 +57,7 @@ Note: The initial build may take some time.
 ## 5. Verify the Airflow Setup
 Once the containers are up and running, you should be able to access the Airflow web interface at:
 
-plaintext
-
+```plaintext
 http://localhost:8080
 
 Login credentials are usually:
@@ -76,14 +70,12 @@ Create an Airflow User Credential
 If needed, create an Airflow user credential with the following command (replace with your values):
 
 ```bash
-
 docker-compose exec webserver airflow users create --username <your_username> --firstname <FirstName> --lastname <LastName> --role Admin --email <email@example.com> --password <your_password>
 
 ## 6. Install Python Dependencies (Optional)
 If you need to run scripts outside of Docker, install dependencies listed in requirements.txt:
 
 ```bash
-
 pip install -r requirements.txt
 
 ## 7. Running the DAGs
@@ -103,7 +95,6 @@ Logs for each task are available in the Airflow web interface. Alternatively, yo
 To stop the Docker containers, run:
 
 ```bash
-
 docker-compose down
 This will stop all running services.
 
