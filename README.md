@@ -17,7 +17,7 @@ Dockerfile
 docker-compose.yml
 requirements.txt
 README.md
-
+```
 
 # Steps to Set Up the Project
 
