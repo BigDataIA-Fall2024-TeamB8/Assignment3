@@ -27,6 +27,7 @@ First, clone the repository to your local machine:
 ```bash
 git clone https://github.com/BigDataIA-Fall2024-TeamB8/Assignment3.git
 cd Assignment3
+```
 
 ## 2. Set Up Environment Variables
 Create a .env file in the root of the Assignment3 directory if it’s not already present. This file should contain environment variables such as AWS credentials and any API keys required for the application.
@@ -36,6 +37,7 @@ For example, your .env file might look like this:
 ```plaintext
 AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+```
 
 Ensure that .env contains the correct variables for your environment. Do not commit this file to GitHub, as it contains sensitive information.
 
@@ -47,7 +49,9 @@ This project uses Docker Compose to set up the environment, including Airflow. T
 
 ```bash
 docker-compose up --build
+```
 This will:
+
 
 Build the Docker images specified in the Dockerfile.
 Set up Airflow and any other dependencies.
@@ -59,6 +63,7 @@ Once the containers are up and running, you should be able to access the Airflow
 
 ```plaintext
 http://localhost:8080
+```
 
 Login credentials are usually:
 
@@ -71,12 +76,14 @@ If needed, create an Airflow user credential with the following command (replace
 
 ```bash
 docker-compose exec webserver airflow users create --username <your_username> --firstname <FirstName> --lastname <LastName> --role Admin --email <email@example.com> --password <your_password>
+```
 
 ## 6. Install Python Dependencies (Optional)
 If you need to run scripts outside of Docker, install dependencies listed in requirements.txt:
 
 ```bash
 pip install -r requirements.txt
+```
 
 ## 7. Running the DAGs
 Data Ingestion DAG: This DAG, defined in data_ingestion_dag.py, handles data ingestion tasks.
@@ -96,5 +103,6 @@ To stop the Docker containers, run:
 
 ```bash
 docker-compose down
+```
 This will stop all running services.
 
