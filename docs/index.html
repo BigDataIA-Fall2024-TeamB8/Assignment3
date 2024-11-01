@@ -1,0 +1,317 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id=""
+                  title=""
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Assignment 3  - CFA Institute Research Foundation Publications" duration="0">
+        <p><strong>Team B-8</strong></p>
+<h2 is-upgraded><strong>Team member 1 - Sathvik Vadavatha</strong></h2>
+<h2 is-upgraded><strong>Team member 2 -  Rutuja Patil</strong></h2>
+<h2 is-upgraded><strong>Team member 3 - Sakshi Aade</strong></h2>
+<p><strong>GitHub Repository Link</strong> - https://github.com/BigDataIA-Fall2024-TeamB8/Assignment3</p>
+<p><strong>GitHub Project Link</strong> - https://github.com/orgs/BigDataIA-Fall2024-TeamB8/projects/3</p>
+<p><strong>Link to Streamlit Cloud Application</strong> -  <a href="http://34.229.200.208:8501/" target="_blank">http://34.229.200.208:8501/</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction" duration="0">
+        <h3 is-upgraded><strong>Technologies used:</strong></h3>
+<ul>
+<li><strong>Streamlit</strong>: Used as the frontend interface for users to interact with the application, allowing for document selection, summary generation, and Q&amp;A interaction.</li>
+<li><strong>OpenAI AP</strong>I: Utilized for generating embeddings for document text and user questions, enabling efficient vector-based querying and retrieval.</li>
+<li><strong>AWS S3</strong>: Storage solution for uploading, storing, and retrieving the dataset (PDFs and images) scraped from CFA Institute Research Foundation Publications.</li>
+<li><strong>Boto3</strong>: AWS SDK for Python, used to interact with AWS S3, enabling the application to manage file uploads, downloads, and URL generation.</li>
+<li><strong>FastAPI</strong>: Backend framework for creating the API endpoints for document exploration, summary generation, and Q&amp;A functionality.</li>
+<li><strong>Swagger UI</strong>: Automatically generated documentation for FastAPI endpoints, allowing users to explore the API functionalities and test endpoints directly.</li>
+<li><strong>Snowflake Database</strong>: Used to store metadata, image links, and PDF links for each document. This database provides efficient data storage and retrieval capabilities for document information.</li>
+<li><strong>Pinecone</strong>: Vector database for storing and managing embeddings generated from document text, enabling efficient similarity-based retrievals for Q&amp;A.</li>
+<li><strong>NVIDIA Llama 3.2-3b-instruct Model</strong>: Used for large language model (LLM) tasks, specifically for on-the-fly summary generation and Q&amp;A response based on context provided by retrieved vectors.</li>
+<li> <strong>PymuPDF</strong>: For text and image extraction</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Problem Statement" duration="0">
+        <h3 is-upgraded><strong>Objectives:</strong></h3>
+<ul>
+<li><strong>Streamlined Model Evaluation</strong>: Develop a system for efficiently retrieving and summarizing information from multiple documents, allowing users to evaluate content quickly without having to read each document in its entirety.</li>
+<li><strong>Model Performance Improvement</strong>: Apply multimodal retrieval-augmented generation (RAG) techniques using NVIDIA&#39;s LLM, OpenAI embeddings, and Pinecone vector storage for high-performance document querying.</li>
+<li><strong>Comprehensive Tracking and Visualization</strong>: Store metadata in Snowflake and use Streamlit for displaying document insights, offering users a seamless experience for document tracking, summary viewing, and analysis.</li>
+<li><strong>User Feedback Integration</strong>: Allow users to generate research notes from Q&amp;A responses, incrementally adding these notes back into the vector database to improve future search accuracy and relevance.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Proof of Concept" duration="0">
+        <p>The architecture involves three main parts:</p>
+<ol type="1" start="1">
+<li><strong>Data Ingestion</strong>: A Selenium-based scraper extracts title, summary, images, and PDF content from CFA Institute Research Foundation Publications. This data is then stored in AWS S3, and the metadata (titles, links, summaries) is loaded into Snowflake.</li>
+<li><strong>Client-Facing Application</strong>: FastAPI serves as the backend, handling requests for document summaries, Q&amp;A, and user authentication. Streamlit serves as the user-facing interface, where users can select documents, view summaries, and ask questions. OpenAI and NVIDIA models power the retrieval and language generation, while Pinecone manages vector embeddings for quick retrieval.</li>
+<li><strong>Research Notes and Continuous Learning</strong>: User-generated Q&amp;A responses are stored as research notes, incrementally indexed in Pinecone for improved future search accuracy.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Overview of the GAIA Data Architecture Workflow:" duration="0">
+        <p><strong>Architectural Diagram:</strong></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a88b369f7aba94f9.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Walkthrough of the Application" duration="0">
+        <p><strong>Airflow Walkthrough: </strong></p>
+<h3 is-upgraded><strong>1. Web Scraping with Selenium and Uploading to S3</strong></h3>
+<p><strong>Functionality Overview</strong>:</p>
+<ul>
+<li>This script uses Selenium to navigate to pages on the CFA Institute Research Foundation website, scrape data, and upload it to an S3 bucket. It handles both Chrome and Firefox WebDriver setups and scrapes publication details, PDF links, and cover images.</li>
+<li>The script is structured to handle different sections of the site by iterating through URLs and dynamically navigating and parsing HTML with BeautifulSoup.</li>
+<li>Metadata, PDF files, and images are uploaded to designated folders in the S3 bucket for each publication.</li>
+</ul>
+<p><strong>Implementation Details</strong>:</p>
+<ul>
+<li><strong>Driver Initialization</strong>: Initializes Chrome or Firefox WebDriver in headless mode. Chrome is used.</li>
+<li><strong>Scraping Logic</strong>: Each publication&#39;s title, summary, PDF link, and cover image are extracted. The publication details are fetched from the list page, while individual links are visited to retrieve PDFs and images.</li>
+<li><strong>Uploading to S3</strong>:</li>
+<li><strong>Metadata JSON</strong>: A JSON file containing the title, summary, and link to the publication page is created for each publication and uploaded to S3.</li>
+<li><strong>PDF and Image Upload</strong>: If available, the publication&#39;s PDF and cover image are downloaded and uploaded to the corresponding S3 folder.</li>
+</ul>
+<p><strong>Key Functions</strong>:</p>
+<ul>
+<li><strong>initialize_chrome_driver</strong> and <strong>initialize_firefox_driver</strong>: Sets up headless WebDriver for Chrome or Firefox.</li>
+<li><strong>scrape_and_upload</strong>: Main function that scrapes the publications, retrieves metadata, PDF, and image links, and uploads the data to S3.</li>
+</ul>
+<h3 is-upgraded><strong>2. Airflow DAG for Automating the Scraping and Upload Process</strong></h3>
+<p><strong>DAG Overview</strong>:</p>
+<ul>
+<li>This Airflow DAG, named scrape_and_upload_dag, automates the scrape_and_upload process to regularly collect and upload data from the CFA Institute site to S3.</li>
+<li>The DAG includes a single task to call the scrape_and_upload function defined in the scraping script.</li>
+</ul>
+<p><strong>Implementation Details</strong>:</p>
+<ul>
+<li><strong>DAG Definition</strong>:</li>
+<li>The DAG is set to start on October 1, 2023, with no schedule interval (schedule_interval=None), meaning it runs only when triggered manually or by an external system.</li>
+<li>catchup=False prevents the DAG from running on all previous dates, focusing only on current or future scheduled runs.</li>
+<li><strong>Task Definition</strong>:</li>
+<li><strong>scrape_and_upload_task</strong>: A PythonOperator is used to run the scrape_and_upload function within Airflow. This operator calls the function directly from the script.</li>
+</ul>
+<p><strong>Benefits</strong>:</p>
+<ul>
+<li><strong>Automation</strong>: The DAG allows the scraping and upload process to run automatically on a schedule, reducing the need for manual intervention.</li>
+<li><strong>Error Handling</strong>: Airflow&#39;s built-in logging and error-handling features provide insights into the task&#39;s status and help debug issues if the scraping or uploading fails.</li>
+</ul>
+<h3 is-upgraded><strong>3. Data Loading into Snowflake from S3</strong></h3>
+<p><strong>Overview</strong>:</p>
+<ul>
+<li>This script connects to Snowflake and loads data from the S3 bucket. It lists folders in S3, retrieves metadata, image, and PDF links, and then inserts this data into a Snowflake table.</li>
+<li>Each publication&#39;s data (ID, title, summary, image link, and PDF link) is saved in Snowflake for efficient querying and further analysis.</li>
+</ul>
+<p><strong>Implementation Details</strong>:</p>
+<ul>
+<li><strong>Snowflake Connection</strong>: Establishes a secure connection to Snowflake using snowflake.connector and initializes the required cursor for executing SQL statements.</li>
+<li><strong>S3 Interaction</strong>:</li>
+<li>Lists folders in the S3 bucket to identify individual publications.</li>
+<li>For each folder, it retrieves the metadata JSON, PDF, and image files to gather all necessary information for the Snowflake insertion.</li>
+<li><strong>Data Insertion</strong>:</li>
+<li>If all required fields (ID, title, image link, and PDF link) are available, the script inserts a new row into the CFAI_TAB table in Snowflake.</li>
+<li><strong>Error Handling</strong>: Logs errors for missing data or Snowflake insertion failures to aid in debugging.</li>
+</ul>
+<p><strong>Key Steps</strong>:</p>
+<ul>
+<li><strong>Listing Folders and Files</strong>: Identifies all publications by listing folder prefixes in S3. Each folder corresponds to a single publication.</li>
+<li><strong>Metadata Extraction</strong>:</li>
+<li>Reads the metadata JSON file to extract the title and summary.</li>
+<li>Sets up links to the image and PDF files stored in S3.</li>
+<li><strong>Data Insertion to Snowflake</strong>: Inserts extracted information into CFAI_TAB, which includes columns for ID, title, summary, image link, and PDF link.</li>
+</ul>
+<p class="image-container"><img style="width: 568.50px" src="img\\47c4d1d766acf6d6.png"></p>
+<p><strong>Streamlit Application Walkthrough: </strong></p>
+<p><strong>Home Page</strong></p>
+<ul>
+<li><strong>Welcome Message</strong>: Users are welcomed with a description of the tool&#39;s capabilities, encouraging them to use AI-powered assistance for document exploration.</li>
+<li><strong>Login and Sign-Up Options</strong>: From the sidebar, users can choose to either log in (if they already have an account) or sign up for a new account.</li>
+</ul>
+<p class="image-container"><img style="width: 496.50px" src="img\\71ac6d7ab387e702.png"></p>
+<p class="image-container"><img style="width: 522.98px" src="img\\88a6560b42f895f6.png"></p>
+<p><strong>User Authentication</strong></p>
+<ul>
+<li><strong>Sign-Up</strong>: New users can navigate to the &#34;Sign Up&#34; section, enter their username, password, and email, and register for access. Upon successful registration, they&#39;re notified, and they can proceed to the login page.</li>
+<li><strong>Login</strong>: Existing users can log in by providing their username and password. Upon successful login, the session token is stored, and they&#39;re redirected to the &#34;Documents&#34; page to begin exploring content.</li>
+</ul>
+<p><strong>Document Exploration (Documents Page)</strong></p>
+<ul>
+<li><strong>Document Selection</strong>: After logging in, users are directed to the &#34;Documents&#34; page, where they can select a document from a dropdown list populated with titles from the database.</li>
+<li><strong>Document Details</strong>:</li>
+<li><strong>Title and Summary</strong>: Once a document is selected, its title and summary are displayed.</li>
+<li><strong>PDF and Image Links</strong>: If available, a link to the PDF and a preview image are shown, with images fetched directly or through presigned URLs for secure access.</li>
+<li><strong>PDF Preview</strong>: Users can view a preview of the selected PDF file, displayed in an iframe within an expander.</li>
+</ul>
+<p class="image-container"><img style="width: 500.41px" src="img\\2a5882de1ddfc10.png"></p>
+<p><strong>Summary Generation</strong></p>
+<ul>
+<li><strong>Generate Summary Button</strong>: After selecting a document, users can generate a summary by clicking the &#34;Generate Summary&#34; button.</li>
+<li><strong>Dynamic Summarization</strong>: The application sends a request to the backend to summarize the document using NVIDIA&#39;s LLM. The summary is displayed directly on the page.</li>
+<li><strong>Report Display</strong>: If the summary includes images or additional text blocks, they&#39;re displayed inline within the report.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img\\3b2a869b325a9273.png"></p>
+<p><strong>Document-Specific Q&amp;A</strong></p>
+<ul>
+<li><strong>Question Input</strong>: Below the summary section, users can enter questions specific to the selected document.</li>
+<li><strong>Q&amp;A Interaction</strong>: Upon clicking &#34;Ask Document-Specific Question,&#34; the app sends the question to the backend for processing. It uses the document&#39;s context, stored in the Pinecone vector database, to provide a relevant answer generated by NVIDIA&#39;s LLM.</li>
+<li><strong>Answer Display</strong>: The answer, along with any relevant context, is displayed under the question. Users can review this answer as part of their exploration of the document.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img\\d7d881e1b8e5cf6d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a9ff6fb30fc76f2f.png"></p>
+<p><strong>Global Q&amp;A</strong></p>
+<ul>
+<li><strong>Global Question Input</strong>: Users can access the &#34;Global Q&amp;A&#34; section from the sidebar, where they can ask questions across all documents stored in the system.</li>
+<li><strong>Answer Retrieval</strong>: The app sends the question to the backend, which retrieves the most relevant content from the entire document collection and generates an answer.</li>
+<li><strong>Answer and Sources</strong>: The answer is displayed alongside references to the original documents, allowing users to trace the sources of the information.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img\\b07d276e36c675cf.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d1e5b3939490f6ae.png"></p>
+<p><strong>Research Notes</strong></p>
+<ul>
+<li><strong>Viewing Research Notes</strong>: Users can navigate to the &#34;Research Notes&#34; section, where they can select a specific publication to view any research notes associated with it.</li>
+<li><strong>Individual Research Note Display</strong>: For the selected publication, research notes are displayed in an expandable format, allowing users to explore insights derived from previous Q&amp;A interactions or summaries.</li>
+<li><strong>Publication-Specific Q&amp;A</strong>: Users can ask questions specifically about the research notes for a selected publication. This functionality searches within the indexed notes for that document, providing relevant answers based on previously generated insights.</li>
+</ul>
+<p class="image-container"><img style="width: 624.00px" src="img\\d3246bdbe4aa5cdb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f15bdce6c00f7238.png"></p>
+<p><strong>Search Across All Research Notes</strong></p>
+<ul>
+<li><strong>Search Functionality</strong>: In the &#34;Search All Research Notes&#34; section, users can enter a query to search across all research notes saved in the system.</li>
+<li><strong>Answer Display</strong>: The system retrieves answers from all research notes stored in Pinecone. The relevant answers are displayed, giving users access to insights across multiple documents.</li>
+</ul>
+<p class="image-container"><img style="width: 585.93px" src="img\\f15bdce6c00f7238.png"></p>
+<p><strong>Derived Notes and Validation</strong></p>
+<ul>
+<li><strong>Save Derived Note</strong>: After each Q&amp;A interaction, users have the option to save a derived research note based on the answer. This allows users to incrementally add meaningful insights back into the vector database.</li>
+<li><strong>Validate Research Note</strong>: Users can validate research notes to add them to Pinecone&#39;s vector storage, associating them with the document metadata, which improves future retrieval accuracy.</li>
+<li><strong>Delete Research Note</strong>: If needed, users can delete an existing research note from the selected document.</li>
+</ul>
+<p class="image-container"><img style="width: 442.78px" src="img\\197537037164bd91.png"></p>
+<p><strong>FastAPI Walkthrough: </strong></p>
+<h4 is-upgraded><strong>1. User Authentication and Authorization</strong></h4>
+<ul>
+<li><strong>Signup Endpoint (/signup)</strong>:</li>
+<li>New users can create an account by providing a username, password, and email. Passwords are securely hashed using bcrypt, and user details are stored in an RDS database.</li>
+<li>The endpoint checks if the username already exists to prevent duplicate accounts.</li>
+<li><strong>Login Endpoint (/login)</strong>:</li>
+<li>Existing users can log in by providing their username and password. If authenticated, a JSON Web Token (JWT) is generated and returned, allowing secure access to protected endpoints.</li>
+<li>The JWT is configured to expire after 30 minutes.</li>
+<li><strong>Token Validation (get_current_user)</strong>:</li>
+<li>This utility function decodes the JWT to validate the user&#39;s identity on each request to protected endpoints, ensuring only authenticated users can access certain functionalities.</li>
+</ul>
+<h4 is-upgraded><strong>2. Document Management</strong></h4>
+<ul>
+<li><strong>Get All Document Titles (/documents)</strong>:</li>
+<li>This endpoint retrieves the list of available document titles from the Snowflake database, providing users with a selection of documents to explore.</li>
+<li><strong>Get Document Details (/document/{title})</strong>:</li>
+<li>For a given document title, this endpoint retrieves details like the summary, PDF link, and image link from Snowflake.</li>
+<li>It generates presigned URLs for S3 links, allowing secure access to document files.</li>
+</ul>
+<h4 is-upgraded><strong>3. Summary Generation</strong></h4>
+<ul>
+<li><strong>Generate Summary for a Document (/document/{title}/generate_summary)</strong>:</li>
+<li>For a selected document, this endpoint generates a concise summary.</li>
+<li>It retrieves relevant chunks of the document from the Pinecone vector database and combines them into an introduction using a prompt-based approach with NVIDIA&#39;s LLM.</li>
+<li>The response includes text and any associated images, enhancing the summary with relevant visual references.</li>
+</ul>
+<h4 is-upgraded><strong>4. Q&amp;A Functionality</strong></h4>
+<ul>
+<li><strong>Document-Specific Q&amp;A (/document/{title}/qa)</strong>:</li>
+<li>Users can ask questions about a specific document. The question is embedded, and the embedding is queried in the Pinecone vector database to retrieve relevant context chunks from the document.</li>
+<li>The retrieved context is used to generate a detailed response using NVIDIA&#39;s LLM.</li>
+<li>This endpoint also includes relevant images from the document in the response, providing a richer, multimedia answer.</li>
+<li><strong>Global Q&amp;A (/qa)</strong>:</li>
+<li>This endpoint allows users to ask questions across all documents. The question is embedded and queried in Pinecone, searching the entire collection.</li>
+<li>The top results are compiled into a context prompt and sent to NVIDIA&#39;s LLM for a comprehensive answer.</li>
+<li>This endpoint prioritizes efficiency, limiting the context to top matches and including only one image if available.</li>
+</ul>
+<h4 is-upgraded><strong>5. Research Notes Management</strong></h4>
+<ul>
+<li><strong>Generate Embedding for Research Notes (/generate_embedding)</strong>:</li>
+<li>This endpoint generates an embedding for a given research note text using OpenAI&#39;s embedding model. The embedding can be used for storage in Pinecone and similarity-based retrieval.</li>
+<li><strong>Store Research Note (/store_research_note)</strong>:</li>
+<li>Users can save their research notes in Pinecone. Each note is associated with metadata, including the document title and note content.</li>
+<li>The note is upserted into a dedicated Pinecone index for research notes, allowing for future retrieval based on document context or user query.</li>
+<li><strong>Get Research Notes for a Document (/research_notes/{title})</strong>:</li>
+<li>This endpoint retrieves all research notes associated with a specific document title, allowing users to view notes related to a particular publication.</li>
+<li><strong>Save Derived Note (/save_derived_note)</strong>:</li>
+<li>Users can save derived notes based on Q&amp;A responses. The note content is embedded and upserted into the research notes index in Pinecone, allowing continuous indexing and enrichment of the knowledge base.</li>
+</ul>
+<h4 is-upgraded><strong>6. Search in Research Notes</strong></h4>
+<ul>
+<li><strong>Global Research Notes Search (/search_research_notes)</strong>:</li>
+<li>This endpoint allows users to search across all saved research notes using a query. The query is embedded and compared to embeddings in the research notes index.</li>
+<li>Top matches are returned in a report format, including both text and image references where available.</li>
+<li>The NVIDIA LLM is used to generate a comprehensive answer based on the matching notes, and users can save this response as a new derived note if needed.</li>
+<li><strong>Publication-Specific Research Notes Search (/search_publication_notes)</strong>:</li>
+<li>Users can search within the research notes for a specific publication by providing the title.</li>
+<li>Similar to the global search, this endpoint embeds the query, filters results by publication title, and retrieves the most relevant notes.</li>
+</ul>
+<p class="image-container"><img style="width: 676.99px" src="img\\e25035988edcecc5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="References" duration="0">
+        <ol type="1" start="1">
+<li><a href="https://requests.readthedocs.io/en/latest/" target="_blank">https://requests.readthedocs.io/en/latest/</a></li>
+<li><a href="https://docs.streamlit.io/" target="_blank">https://docs.streamlit.io/</a></li>
+<li><a href="https://www.selenium.dev/documentation/" target="_blank">https://www.selenium.dev/documentation/</a></li>
+<li><a href="https://blog.streamlit.io/crafting-a-dashboard-app-in-python-using-streamlit/" target="_blank">https://blog.streamlit.io/crafting-a-dashboard-app-in-python-using-streamlit/</a></li>
+<li><a href="https://openai.com/chatgpt/" target="_blank">https://openai.com/chatgpt/</a></li>
+<li><a href="https://platform.openai.com/docs/quickstart" target="_blank">https://platform.openai.com/docs/quickstart</a></li>
+<li><a href="https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken" target="_blank">https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken</a></li>
+<li><a href="https://cookbook.openai.com/examples/chat_finetuning_data_prep" target="_blank">https://cookbook.openai.com/examples/chat_finetuning_data_prep</a></li>
+<li><a href="https://aws.amazon.com/console/" target="_blank">https://aws.amazon.com/console/</a></li>
+<li><a href="https://docs.aws.amazon.com/s3/" target="_blank">https://docs.aws.amazon.com/s3/</a></li>
+<li><a href="https://platform.openai.com/docs/guides/moderation" target="_blank">https://platform.openai.com/docs/guides/moderation</a></li>
+<li><a href="https://pandas.pydata.org/docs/index.html" target="_blank">https://pandas.pydata.org/docs/index.html</a></li>
+<li><a href="https://matplotlib.org/stable/index.html" target="_blank">https://matplotlib.org/stable/index.html</a></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
