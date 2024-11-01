@@ -1,0 +1,21 @@
+requests
+langchain-openai  # Ensure correct version of langchain_openai module
+langchain
+pinecone-client  # Pinecone client library
+boto3
+snowflake-connector-python
+pymupdf  # PyMuPDF for PDF extraction
+fastapi
+pydantic
+pydantic[email]
+python-jose  # Library for JWT handling (PyJWT alternative)
+passlib[bcrypt]  # Password hashing
+pyodbc
+botocore
+pdf2image  # Convert PDF pages to images
+streamlit
+Pillow  # PIL for image handling
+python-dotenv  # For loading .env files
+uvicorn  # ASGI server for FastAPI
+langchain-nvidia-ai-endpoints
+python-multipart

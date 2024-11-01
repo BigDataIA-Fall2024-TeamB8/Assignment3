@@ -1,0 +1,11 @@
+psycopg2-binary
+selenium
+requests
+boto3
+beautifulsoup4
+webdriver_manager
+pymupdf
+pinecone-client
+snowflake-connector-python
+langchain
+langchain_openai
