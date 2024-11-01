@@ -1,3 +1,15 @@
+
+# EC2 Instance Links
+
+Streamlit: [http://34.229.200.208:8501/]
+
+FastAPI: [http://34.229.200.208:8000/docs]
+
+Airflow: [http://34.229.200.208:8080/]
+
+
+
+
 # Assignment 3
 This project provides an end-to-end data processing pipeline using Airflow, Docker, Snowflake, FastAPI, and Streamlit for scraping and managing data from external sources, storing it in AWS S3 and Snowflake, and interacting with it via APIs and a user-friendly interface.
 
