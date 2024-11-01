@@ -10,6 +10,8 @@ FastAPI: [http://34.229.200.208:8000/docs]
 
 Airflow: [http://34.229.200.208:8080/]
 
+# Codelabs: [https://bigdataia-fall2024-teamb8.github.io/Assignment3/]
+
 
 
 
